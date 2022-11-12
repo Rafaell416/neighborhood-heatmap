@@ -1,20 +1,44 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { useEffect, useCallback } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import {
+  Mulish_600SemiBold, Mulish_400Regular, Mulish_700Bold
+} from "@expo-google-fonts/mulish";
+import * as Font from "expo-font"; import * as SplashScreen from 'expo-splash-screen';
+
+import Navigation from './src/navigation';
 
 export default function App() {
+  const [appIsReady, setAppIsReady] = React.useState(false);
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+        await Font.loadAsync({ Mulish_600SemiBold, Mulish_400Regular, Mulish_700Bold });
+      }
+      catch (error) {
+
+      }
+      finally {
+        setAppIsReady(true);
+      }
+    })();
+  }, []);
+
+  const onLayout = React.useCallback(() => {
+    if (appIsReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View onLayout={onLayout} style={{ flex: 1 }}>
+      <Navigation />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
